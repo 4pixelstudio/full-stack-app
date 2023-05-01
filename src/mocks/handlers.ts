@@ -8,4 +8,11 @@ export const handlers = [
 
     return res(ctx.status(200), ctx.json(data));
   }),
+
+  rest.post("/cards", async (req, res, ctx) => {
+    // save position for all the items
+    const body = await req.json();
+    localStorage.setItem(CARDS_STORAGE_KEY_NAME, JSON.stringify(body.cards));
+    return res(ctx.status(200));
+  }),
 ];

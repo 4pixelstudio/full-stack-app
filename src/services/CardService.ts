@@ -16,6 +16,20 @@ class CardService {
       throw error;
     }
   };
+
+  update = async (cards: CardInterface[]): Promise<boolean> => {
+    const endpoint = `${BASE_URL}/cards`;
+
+    try {
+      await axios.post(endpoint, {
+        cards: cards,
+      });
+      return true;
+    } catch (error: any) {
+      console.error(error);
+      throw error;
+    }
+  };
 }
 
 export default CardService;

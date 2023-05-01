@@ -1,24 +1,62 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Card from "../../components/Card/Card";
 import CardInterface from "../../interfaces/CardInterface";
 import FullScreenImage from "../../components/FullScreenImage/FullScreenImage";
 import CardService from "../../services/CardService";
+import { SAVE_INTERVAL_IN_MILLISECONDS } from "../../constants/constants";
+import { formatDate } from "../../utils/helpers";
+import Spinner from "../../components/Spinner/Spinner";
 
 function DraggableCards() {
   const [cards, setCards] = useState<CardInterface[]>([]);
   const [image, setImage] = useState("");
+  const cardsRef = useRef(cards);
+  const originalCardsRef = useRef(cards);
+  const [lastSave, setLastSave] = useState<string>("-");
+  const [saving, setSaving] = useState<boolean>(false);
   const cardService = new CardService();
 
   useEffect(() => {
     fetchCards();
+
+    const intervalId = setInterval(handleSave, SAVE_INTERVAL_IN_MILLISECONDS);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
+
+  useEffect(() => {
+    cardsRef.current = cards;
+  }, [cards]);
+
+  const hasOrderChanged = () =>
+    JSON.stringify(cardsRef.current) !==
+    JSON.stringify(originalCardsRef.current);
 
   const fetchCards = async () => {
     try {
       const cards = await cardService.get();
       setCards(cards);
+      originalCardsRef.current = cards;
     } catch (e) {
-      // Handle exception
+      // TODO: Handle exception
+    }
+  };
+
+  const handleSave = async () => {
+    if (hasOrderChanged()) {
+      try {
+        setSaving(true);
+        await cardService.update(cardsRef.current);
+        setLastSave(formatDate(new Date()));
+        originalCardsRef.current = cardsRef.current;
+      } catch (e) {
+        // TODO: Handle exception - Notify the user and reset the order of cards / retry
+        setCards(originalCardsRef.current);
+      } finally {
+        setSaving(false);
+      }
     }
   };
 
@@ -78,6 +116,8 @@ function DraggableCards() {
           </div>
         ))}
       </div>
+
+      <div>Last Save: {saving ? <Spinner show={true} /> : lastSave}</div>
 
       <FullScreenImage
         src={image}
