@@ -1,4 +1,5 @@
 import CardInterface from "../../interfaces/CardInterface";
+import LazyLoadImage from "../LazyLoadImage/LazyLoadImage";
 
 interface CardProps {
   card: CardInterface;
@@ -13,12 +14,9 @@ const Card: React.FC<CardProps> = ({ card }) => {
       }}
     >
       <p>{card.title}</p>
-      <img
+      <LazyLoadImage
         src={`https://placedog.net/640/480?r&type=${card.type}`}
         alt="image"
-        style={{
-          width: "100%",
-        }}
       />
     </div>
   );
