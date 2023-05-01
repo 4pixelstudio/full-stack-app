@@ -1,12 +1,26 @@
-import { useState } from "react";
-import data from "../../data/data.json";
+import { useState, useEffect } from "react";
 import Card from "../../components/Card/Card";
 import CardInterface from "../../interfaces/CardInterface";
 import FullScreenImage from "../../components/FullScreenImage/FullScreenImage";
+import CardService from "../../services/CardService";
 
 function DraggableCards() {
-  const [cards, setCards] = useState<CardInterface[]>(data);
+  const [cards, setCards] = useState<CardInterface[]>([]);
   const [image, setImage] = useState("");
+  const cardService = new CardService();
+
+  useEffect(() => {
+    fetchCards();
+  }, []);
+
+  const fetchCards = async () => {
+    try {
+      const cards = await cardService.get();
+      setCards(cards);
+    } catch (e) {
+      // Handle exception
+    }
+  };
 
   const handleDragStart = (
     event: React.DragEvent<HTMLDivElement>,
