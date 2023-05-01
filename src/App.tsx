@@ -1,9 +1,9 @@
-import CardList from "./pages/CardList/CardList";
+import DraggableCards from "./pages/DraggableCards/DraggableCards";
 
 function App() {
   return (
     <div className="App">
-      <CardList />
+      <DraggableCards />
     </div>
   );
 }
