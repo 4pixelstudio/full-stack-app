@@ -23,6 +23,7 @@ const LazyLoadImage: React.FC<LazyLoadImageProps> = ({ src, alt = "" }) => {
         style={{
           display: loading ? "none" : "block",
           width: "100%",
+          cursor: "pointer",
         }}
         onLoad={(_) => {
           setLoading(false);
